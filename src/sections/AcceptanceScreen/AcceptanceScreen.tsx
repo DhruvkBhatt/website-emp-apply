@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
 import { acceptance, getOverHere } from '@/content';
+import { useAppState } from '@/state/AppState';
 import { ActionButton } from '@/components/ActionButton';
 import { TerminalBlock } from '@/components/TerminalBlock';
 import { useLazyConfetti } from '@/hooks/useLazyConfetti';
@@ -17,6 +18,8 @@ export function AcceptanceScreen({ open, onClose }: { open: boolean; onClose: ()
   const fire = useLazyConfetti();
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const { state, dispatch } = useAppState();
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -65,7 +68,31 @@ export function AcceptanceScreen({ open, onClose }: { open: boolean; onClose: ()
             <TerminalBlock lines={[...acceptance.lines]} stagger={reduced ? 0 : 300} />
 
             <p className="pf-serif text-step-2 text-accent-text">{acceptance.callback}</p>
-            <p className="pf-mono text-fg-muted">{getOverHere.staticLine}</p>
+            <div className="w-full max-w-sm">
+              {!failed ? (
+                (() => {
+                  const src = getOverHere.gifSrc.startsWith('http')
+                    ? getOverHere.gifSrc
+                    : `${import.meta.env.BASE_URL}${getOverHere.gifSrc}`;
+                  return (
+                    <img
+                      src={src}
+                      alt={getOverHere.gifAlt}
+                      width={480}
+                      height={270}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-auto w-full rounded-md"
+                      onLoad={() => dispatch({ type: 'gifSeen' })}
+                      onError={() => setFailed(true)}
+                    />
+                  );
+                })()
+              ) : (
+                <p className="pf-mono text-fg-muted">{getOverHere.staticLine}</p>
+              )}
+              {failed && <p className="pf-mono mt-2 text-fg-muted">{getOverHere.missingAssetNote}</p>}
+            </div>
 
             <div className="flex flex-wrap gap-3">
               <ActionButton ref={closeRef} onClick={onClose}>
