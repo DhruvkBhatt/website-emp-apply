@@ -18,7 +18,7 @@ export function AcceptanceScreen({ open, onClose }: { open: boolean; onClose: ()
   const fire = useLazyConfetti();
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState();
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
