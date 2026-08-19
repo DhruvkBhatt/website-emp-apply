@@ -1,0 +1,21 @@
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+.DS_Store
+.vite
+
+# §5.4 — privacy tiers, enforced by .gitignore
+NOTES.private.md
+*.private.*
+src/content/private/
+.env
+.env.*
+!.env.example
+
+# editors
+.idea
+.vscode/*
+!.vscode/extensions.json
+*.swp

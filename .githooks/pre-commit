@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# PLAN §5.6 — a plain shell pre-commit hook. No husky, no lint-staged, nothing
+# to keep up to date.
+#
+# Install once:
+#   git config core.hooksPath .githooks
+#
+set -euo pipefail
+
+exec ./scripts/privacy-check.sh --staged

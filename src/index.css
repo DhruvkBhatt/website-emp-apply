@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import './design/tokens.css';
+
+/* Tailwind v4: expose the design tokens (§3) as utility-generating theme
+   values so `bg-bg`, `text-fg`, `font-serif`, `ease-premium` etc. all resolve
+   to the same CSS variables the raw tokens use. One source of truth. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-ring: var(--ring);
+  --color-ivory: var(--ivory);
+  --color-ink: var(--ink);
+  --color-wine: var(--wine);
+  --color-rose: var(--rose);
+  --color-champagne: var(--champagne);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --text-step--1: var(--step--1);
+  --text-step-0: var(--step-0);
+  --text-step-1: var(--step-1);
+  --text-step-2: var(--step-2);
+  --text-step-3: var(--step-3);
+  --text-step-4: var(--step-4);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --ease-premium: var(--ease-premium);
+}

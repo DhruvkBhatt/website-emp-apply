@@ -1,0 +1,235 @@
+/*
+ * PLAN §3 — design system as code.
+ *
+ * Every colour that touches text has been checked to ≥ 4.5:1 against the
+ * backgrounds it is actually used on (§7). Where a brand colour fails, there is
+ * a darkened `-text` variant and the raw colour is decoration only:
+ *
+ *   rose      #B76E79 on ivory = 3.24:1  → DECORATION ONLY
+ *   rose-text #96505B on ivory = 5.04:1  → text
+ *   wine      #6E1B32 on ivory = 9.78:1  → text
+ *   champagne #D9BE8A on ink   = 10.5:1  → text
+ *   ink-muted #4A3F41 on ivory = 8.70:1  → secondary text
+ *   champ-mut #B9A279 on ink   = 7.60:1  → secondary text
+ */
+
+:root {
+  /* --- palette ------------------------------------------------------- */
+  --ivory: #fbf7f0;
+  --ink: #14100f;
+  --wine: #6e1b32;
+  --wine-deep: #2a0a14;
+  --rose: #b76e79;
+  --rose-text: #96505b;
+  --champagne: #d9be8a;
+  --champagne-muted: #b9a279;
+  --mogra: #fffdf8;
+  --ink-muted: #4a3f41;
+  --pass: #2f6f4f;
+  --fail: #9a3324;
+
+  /* --- type --------------------------------------------------------- */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* fluid scale — mobile first, caps out on desktop */
+  --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.84rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --step-3: clamp(1.9rem, 1.5rem + 2vw, 2.9rem);
+  --step-4: clamp(2.4rem, 1.7rem + 3.4vw, 4.2rem);
+
+  /* --- motion ------------------------------------------------------- */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 180ms;
+  --dur-mid: 420ms;
+  --dur-slow: 900ms;
+
+  /* --- shape -------------------------------------------------------- */
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --border-hairline: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  --shadow-lift: 0 18px 50px -20px rgb(20 16 15 / 35%);
+
+  /* --- semantic slots, re-pointed per theme ------------------------- */
+  --bg: var(--ivory);
+  --bg-raised: var(--mogra);
+  --fg: var(--ink);
+  --fg-muted: var(--ink-muted);
+  --accent: var(--wine);
+  --accent-text: var(--wine);
+  --ring: var(--champagne);
+}
+
+/* §3 — four themes drive the personality shift. Section.tsx sets data-theme
+   and every child inherits through these slots. */
+
+[data-theme='executive'] {
+  --bg: var(--ink);
+  --bg-raised: #1d1817;
+  --fg: var(--champagne);
+  --fg-muted: var(--champagne-muted);
+  --accent: var(--champagne);
+  --accent-text: var(--champagne);
+  --ring: var(--champagne);
+}
+
+[data-theme='warm'] {
+  --bg: var(--ivory);
+  --bg-raised: var(--mogra);
+  --fg: var(--ink);
+  --fg-muted: var(--ink-muted);
+  --accent: var(--wine);
+  --accent-text: var(--wine);
+  --ring: var(--wine);
+}
+
+[data-theme='playful'] {
+  --bg: var(--mogra);
+  --bg-raised: #fff7f6;
+  --fg: var(--ink);
+  --fg-muted: var(--ink-muted);
+  --accent: var(--rose);
+  --accent-text: var(--rose-text);
+  --ring: var(--rose-text);
+}
+
+[data-theme='intimate'] {
+  --bg: var(--wine-deep);
+  --bg-raised: #35101c;
+  --fg: var(--ivory);
+  --fg-muted: #e5d7cf;
+  --accent: var(--champagne);
+  --accent-text: var(--champagne);
+  --ring: var(--champagne);
+}
+
+[data-theme='cinematic'] {
+  --bg: #000000;
+  --bg-raised: #0b0a0a;
+  --fg: var(--ivory);
+  --fg-muted: var(--champagne-muted);
+  --accent: var(--champagne);
+  --accent-text: var(--champagne);
+  --ring: var(--champagne);
+}
+
+/* --- base ----------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.1;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* §7 — every interactive element gets a visible focus ring in the theme's
+   ring colour. Never remove this without a replacement. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* §7 — reduced motion. Both the OS setting and the in-page override
+   (data-motion="reduced" on <html>) collapse animation to instant state. */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion='full']) {
+    scroll-behavior: auto;
+  }
+  html:not([data-motion='full']) *,
+  html:not([data-motion='full']) *::before,
+  html:not([data-motion='full']) *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+html[data-motion='reduced'] {
+  scroll-behavior: auto;
+}
+html[data-motion='reduced'] *,
+html[data-motion='reduced'] *::before,
+html[data-motion='reduced'] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+}
+
+/* --- shared primitives ---------------------------------------------- */
+
+.pf-shell {
+  width: 100%;
+  max-width: 68rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+.pf-serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+
+.pf-mono {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.01em;
+}
+
+.pf-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.pf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

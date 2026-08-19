@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Privacy gate
+        run: npm run privacy
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        env:
+          # §5.5 — the plaintext never enters git history; only the hash, and
+          # only at build time.
+          VITE_MANAGEMENT_PASSPHRASE_HASH: ${{ secrets.VITE_MANAGEMENT_PASSPHRASE_HASH }}
+          VITE_MANAGEMENT_HINT: ${{ secrets.VITE_MANAGEMENT_HINT }}
+          VITE_CLARIFICATION_WHATSAPP: ${{ secrets.VITE_CLARIFICATION_WHATSAPP }}
+          # §6 — set the repo variable VITE_BASE to "/" if you attach a custom
+          # domain, otherwise the project-page default in vite.config.ts applies.
+          VITE_BASE: ${{ vars.VITE_BASE }}
+        run: npx vite build
+
+      - name: Performance budget
+        run: npm run budget
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
