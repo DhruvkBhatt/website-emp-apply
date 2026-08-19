@@ -2,14 +2,14 @@ export const getOverHere = {
   eyebrow: 'Interlude',
   title: 'GET OVER HERE',
   lede: 'One-shot. Plays once, then behaves.',
-  gifSrc: 'https://media.giphy.com/media/CcFkvbedQjX9klkzzM/giphy.gif',
+  gifSrc: 'media/gif/get-over-here.gif',
   gifAlt: 'A dramatic "get over here" gesture from Mortal Kombat II (Warner Bros.)',
   /** §7 — the static equivalent shown under reduced motion. */
   staticLine: 'GET OVER HERE. (Imagine it delivered with full dramatic commitment.)',
   replay: 'Play it again',
   caption: 'Requested formally. Enforced affectionately.',
   missingAssetNote:
-    'GIF could not be loaded — if you prefer a local copy, drop a file at public/media/gif/get-over-here.gif (≤ 2 MB, §7).',
+    'GIF could not be loaded — drop a file at public/media/gif/get-over-here.gif (≤ 2 MB, §7) to use the local fallback.',
 } as const;
 
 export const compatibility = {
