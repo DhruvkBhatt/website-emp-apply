@@ -36,18 +36,25 @@ export function GetOverHere() {
         <MotionSafe fallback={<p className="text-step-1">{getOverHere.staticLine}</p>}>
           <div className="w-full max-w-sm">
             {shouldLoad && !failed ? (
-              <img
-                key={replayKey}
-                src={`${import.meta.env.BASE_URL}${getOverHere.gifSrc}`}
-                alt={getOverHere.gifAlt}
-                width={480}
-                height={270}
-                loading="lazy"
-                decoding="async"
-                className="h-auto w-full rounded-md"
-                onLoad={() => dispatch({ type: 'gifSeen' })}
-                onError={() => setFailed(true)}
-              />
+              (() => {
+                const src = getOverHere.gifSrc.startsWith('http')
+                  ? getOverHere.gifSrc
+                  : `${import.meta.env.BASE_URL}${getOverHere.gifSrc}`;
+                return (
+                  <img
+                    key={replayKey}
+                    src={src}
+                    alt={getOverHere.gifAlt}
+                    width={480}
+                    height={270}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-auto w-full rounded-md"
+                    onLoad={() => dispatch({ type: 'gifSeen' })}
+                    onError={() => setFailed(true)}
+                  />
+                );
+              })()
             ) : (
               <p className="text-step-1">{getOverHere.staticLine}</p>
             )}
