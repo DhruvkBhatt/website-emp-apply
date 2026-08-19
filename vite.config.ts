@@ -4,8 +4,9 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 
 // §6: project-page base. Switch to '/' if you attach a custom domain
-// (and add public/CNAME at the same time).
-const base = process.env.VITE_BASE ?? '/project-forever/';
+// (and add public/CNAME at the same time). Default to this repo's Pages
+// subpath so builds on GitHub Actions publish correct asset URLs.
+const base = process.env.VITE_BASE ?? '/website-emp-apply/';
 
 export default defineConfig({
   base,
